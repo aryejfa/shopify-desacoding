@@ -5,6 +5,7 @@
   Shopify Skeleton Theme
 </h1>
 
+
 A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
 
 <p align="center">
