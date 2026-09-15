@@ -1,0 +1,1 @@
+/Users/bitgroup/Documents/BIT/GIT/shopify-desacoding/shopify-desacoding-theme/AGENTS.md
