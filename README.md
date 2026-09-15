@@ -12,6 +12,7 @@ A minimal, carefully structured Shopify theme designed to help you quickly get s
   <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shopify/skeleton-theme/actions/workflows/ci.yml/badge.svg"></a>
 </p>
 
+
 ## Getting started
 
 ### Prerequisites
