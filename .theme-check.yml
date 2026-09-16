@@ -1,1 +1,8 @@
 extends: theme-check:recommended
+
+# The theme intentionally shares a global design-system stylesheet
+# (snippets/base.liquid) across every section/block/snippet, so most classes
+# are defined outside the file that uses them. This check has too many false
+# positives with that architecture to be useful here.
+ValidScopedCSSClass:
+  enabled: false

@@ -17,7 +17,18 @@
     "checkout": "Checkout",
     "title": "Cart",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "note": "Order note",
+    "note_placeholder": "Add special instructions for your order",
+    "subtotal": "Subtotal",
+    "taxes_and_shipping_at_checkout": "Taxes and shipping calculated at checkout",
+    "quantity": "Quantity for {{ product }}",
+    "decrease_quantity": "Decrease quantity for {{ product }}",
+    "increase_quantity": "Increase quantity for {{ product }}",
+    "empty_title": "Your cart is empty",
+    "empty_description": "Looks like you haven't added anything yet. Start exploring our products.",
+    "continue_shopping": "Continue shopping",
+    "error_generic": "Something went wrong. Please try again."
   },
   "customers": {
     "login": {
@@ -29,6 +40,18 @@
   },
   "collections": {
     "title": "Collections"
+  },
+  "collection": {
+    "filter_and_sort": "Filter & sort",
+    "apply_filters": "Apply filters",
+    "clear_all": "Clear all",
+    "sort_by": "Sort by",
+    "sort_by_label": "Sort by:",
+    "price_min": "From price",
+    "price_max": "To price",
+    "product_count": "{{ count }} products",
+    "empty_title": "No products found",
+    "empty_description": "Try removing some filters or search for something else."
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -44,9 +67,77 @@
   },
   "search": {
     "title": "Search",
-    "placeholder": "Search articles, pages, or products",
+    "placeholder": "Search products, pages and more",
     "submit": "Search",
-    "no_results_html": "No results found for {{ terms }}",
-    "results_for_html": "{{ count }} results found for {{ terms }}"
+    "no_results_html": "No results found for \"{{ terms }}\"",
+    "no_results_suggestion": "Check the spelling or try a different search term.",
+    "results_for_html": "{{ count }} results found for \"{{ terms }}\""
+  },
+  "newsletter": {
+    "email_label": "Email address",
+    "email_placeholder": "Enter your email",
+    "submit": "Subscribe",
+    "success": "Thanks for subscribing!"
+  },
+  "products": {
+    "add_to_cart": "Add to cart",
+    "added_to_cart": "Added to cart",
+    "choose_options": "Choose options",
+    "description": "Description",
+    "quantity": "Quantity",
+    "select_option": "Select a variant",
+    "in_stock": "In stock",
+    "unavailable": "Unavailable",
+    "media_gallery": "Product media gallery",
+    "recommendations_heading": "You may also like",
+    "price": {
+      "unavailable": "Unavailable",
+      "sale_price": "Sale price",
+      "regular_price": "Regular price",
+      "sold_out": "Sold out",
+      "from": "From {{ price }}",
+      "from_price": "Starting at"
+    },
+    "badges": {
+      "sale": "Sale",
+      "sale_percentage": "-{{ percentage }}%",
+      "sold_out": "Sold out"
+    }
+  },
+  "testimonials": {
+    "rating_label": "Rated {{ rating }} out of 5 stars"
+  },
+  "footer": {
+    "contact_us": "Contact us",
+    "language": "Language",
+    "country_region": "Country/region",
+    "update": "Update"
+  },
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "menu": "Menu",
+      "search": "Search",
+      "cart": "Cart",
+      "account": "Account",
+      "main_navigation": "Main navigation",
+      "next": "Next",
+      "previous": "Previous",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "next": "Next page",
+      "previous": "Previous page"
+    },
+    "editor": {
+      "select_collection": "Select a collection to display products.",
+      "select_products": "Select products to feature in this section."
+    },
+    "search": {
+      "products": "Products"
+    }
   }
 }

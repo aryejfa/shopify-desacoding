@@ -1,0 +1,40 @@
+{% doc %}
+  Renders a link styled as a button, or nothing when no label is given —
+  handy for optional CTA settings that shouldn't render an empty link.
+
+  @param {string} [label] - The button's visible text. Nothing renders when blank.
+  @param {string} [url] - The destination URL. Defaults to `#` when blank so the label still shows.
+  @param {string} [style] - `primary` (default), `secondary` or `outline`
+  @param {string} [size] - `sm`, `md` (default) or `lg`
+  @param {boolean} [block] - Stretch the button to the full width of its container
+
+  @example
+  {% render 'button', label: section.settings.cta_label, url: section.settings.cta_link %}
+  {% render 'button', label: 'Learn more', url: page.url, style: 'outline' %}
+{% enddoc %}
+
+{% if label != blank %}
+  {% liquid
+    assign button_class = 'btn'
+    case style
+      when 'secondary'
+        assign button_class = button_class | append: ' btn--secondary'
+      when 'outline'
+        assign button_class = button_class | append: ' btn--outline'
+    endcase
+
+    case size
+      when 'sm'
+        assign button_class = button_class | append: ' btn--sm'
+      when 'lg'
+        assign button_class = button_class | append: ' btn--lg'
+    endcase
+
+    if block
+      assign button_class = button_class | append: ' btn--block'
+    endif
+  %}
+  <a href="{{ url | default: '#' }}" class="{{ button_class }}">
+    {{ label }}
+  </a>
+{% endif %}

@@ -1,0 +1,133 @@
+{% doc %}
+  Renders a single customer testimonial: optional photo, name, role/company,
+  star rating and quote. Looks good even without a photo.
+
+  @example
+  {% content_for 'block', type: 'testimonial', id: 'testimonial-1' %}
+{% enddoc %}
+
+<figure class="testimonial card card--padded" {{ block.shopify_attributes }}>
+  {% if block.settings.rating > 0 %}
+    <div class="rating" role="img" aria-label="{{ 'testimonials.rating_label' | t: rating: block.settings.rating }}">
+      {% for i in (1..5) %}
+        {% if i <= block.settings.rating %}
+          {% render 'icon', name: 'star', class: 'icon--sm' %}
+        {% else %}
+          {% render 'icon', name: 'star-outline', class: 'icon--sm' %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if block.settings.quote != blank %}
+    <blockquote class="testimonial__quote">{{ block.settings.quote }}</blockquote>
+  {% endif %}
+
+  <figcaption class="testimonial__author">
+    {% if block.settings.photo != blank %}
+      {{ block.settings.photo | image_url: width: 96 | image_tag: alt: block.settings.name, class: 'testimonial__photo', loading: 'lazy' }}
+    {% else %}
+      <span class="testimonial__avatar-fallback" aria-hidden="true">{{ block.settings.name | slice: 0, 1 }}</span>
+    {% endif %}
+    <span>
+      {% if block.settings.name != blank %}
+        <span class="testimonial__name">{{ block.settings.name }}</span>
+      {% endif %}
+      {% if block.settings.role != blank %}
+        <span class="testimonial__role text-secondary text-sm">{{ block.settings.role }}</span>
+      {% endif %}
+    </span>
+  </figcaption>
+</figure>
+
+{% stylesheet %}
+  .testimonial {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+  }
+
+  .testimonial__quote {
+    margin: 0;
+    color: var(--color-foreground);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  .testimonial__author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-block-start: auto;
+  }
+
+  .testimonial__photo {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--style-border-radius-full);
+    object-fit: cover;
+  }
+
+  .testimonial__avatar-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--style-border-radius-full);
+    background: var(--color-background);
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  .testimonial__name {
+    display: block;
+    font-weight: 600;
+  }
+
+  .testimonial__role {
+    display: block;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.testimonial",
+  "settings": [
+    {
+      "type": "range",
+      "id": "rating",
+      "label": "t:labels.rating",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "t:labels.quote",
+      "default": "Materinya sangat mudah dipahami dan langsung bisa dipraktikkan. Sangat membantu proses belajar saya."
+    },
+    {
+      "type": "image_picker",
+      "id": "photo",
+      "label": "t:labels.photo"
+    },
+    {
+      "type": "text",
+      "id": "name",
+      "label": "t:labels.name",
+      "default": "Nama pelanggan"
+    },
+    {
+      "type": "text",
+      "id": "role",
+      "label": "t:labels.role_company",
+      "default": "Pelajar"
+    }
+  ],
+  "presets": [{ "name": "t:general.testimonial" }]
+}
+{% endschema %}

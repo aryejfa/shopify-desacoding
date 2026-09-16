@@ -1,0 +1,31 @@
+{% doc %}
+  Renders a small status badge/pill, e.g. "Sale", "Sold out" or a custom label.
+
+  @param {string} [text] - Custom badge label. Ignored when `type` is set.
+  @param {string} [type] - One of `sale`, `sold_out`, `success`
+  @param {number} [percentage] - Discount percentage, used with type `sale`
+
+  @example
+  {% render 'badge', type: 'sold_out' %}
+  {% render 'badge', type: 'sale', percentage: 20 %}
+  {% render 'badge', text: 'New' %}
+{% enddoc %}
+
+{% case type %}
+  {% when 'sale' %}
+    <span class="badge badge--sale">
+      {% if percentage %}
+        {{ 'products.badges.sale_percentage' | t: percentage: percentage }}
+      {% else %}
+        {{ 'products.badges.sale' | t }}
+      {% endif %}
+    </span>
+  {% when 'sold_out' %}
+    <span class="badge badge--sold-out">{{ 'products.badges.sold_out' | t }}</span>
+  {% when 'success' %}
+    <span class="badge badge--success">{{ text }}</span>
+  {% else %}
+    {% if text %}
+      <span class="badge">{{ text }}</span>
+    {% endif %}
+{% endcase %}

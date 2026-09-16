@@ -1,0 +1,176 @@
+{% doc %}
+  Renders the product media gallery: a main image/video area with
+  lightweight, keyboard-accessible thumbnails. The first image is eager
+  loaded with a high fetch priority to protect LCP; every other media item
+  is lazy loaded. Switches to the selected variant's media automatically.
+
+  @param {product} product - The product whose media should be rendered
+
+  @example
+  {% render 'product-media', product: product %}
+{% enddoc %}
+
+<product-media class="product-media" data-product-media>
+  <div class="product-media__main">
+    {% for media in product.media %}
+      {% liquid
+        assign is_first = false
+        if forloop.first
+          assign is_first = true
+        endif
+      %}
+      <div
+        class="product-media__slide {% if is_first %}is-active{% endif %}"
+        data-media-id="{{ media.id }}"
+        {% unless is_first %}hidden{% endunless %}
+      >
+        {% case media.media_type %}
+          {% when 'video', 'external_video' %}
+            {{ media | media_tag: image_size: '1200x', loading: 'lazy', controls: true }}
+          {% when 'model' %}
+            {{ media | model_viewer_tag }}
+          {% else %}
+            {% if is_first %}
+              {{
+                media.preview_image
+                | image_url: width: 1200
+                | image_tag:
+                  widths: '400, 700, 1000, 1200',
+                  sizes: '(min-width: 990px) 50vw, 100vw',
+                  loading: 'eager',
+                  fetchpriority: 'high',
+                  alt: media.alt,
+                  class: 'product-media__image'
+              }}
+            {% else %}
+              {{
+                media.preview_image
+                | image_url: width: 1200
+                | image_tag:
+                  widths: '400, 700, 1000, 1200',
+                  sizes: '(min-width: 990px) 50vw, 100vw',
+                  loading: 'lazy',
+                  alt: media.alt,
+                  class: 'product-media__image'
+              }}
+            {% endif %}
+        {% endcase %}
+      </div>
+    {% else %}
+      <div class="product-media__slide is-active">
+        <div class="product-media__placeholder">{{ 'product' | placeholder_svg_tag: 'product-media__placeholder-svg' }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if product.media.size > 1 %}
+    <div class="product-media__thumbs" role="tablist" aria-label="{{ 'products.media_gallery' | t }}">
+      {% for media in product.media %}
+        <button
+          type="button"
+          class="product-media__thumb {% if forloop.first %}is-active{% endif %}"
+          data-media-thumb
+          data-media-id="{{ media.id }}"
+          role="tab"
+          aria-selected="{{ forloop.first }}"
+        >
+          {{ media.preview_image | image_url: width: 160 | image_tag: alt: '', loading: 'lazy', widths: '80, 120, 160' }}
+        </button>
+      {% endfor %}
+    </div>
+  {% endif %}
+</product-media>
+
+{% stylesheet %}
+  .product-media__main {
+    position: relative;
+    border-radius: var(--style-border-radius);
+    overflow: hidden;
+    background: var(--color-background);
+  }
+
+  .product-media__slide {
+    aspect-ratio: 1 / 1;
+  }
+
+  .product-media__slide[hidden] {
+    display: none;
+  }
+
+  .product-media__image,
+  .product-media__slide video,
+  .product-media__slide model-viewer {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-media__placeholder-svg {
+    width: 100%;
+    height: 100%;
+    color: var(--color-border);
+  }
+
+  .product-media__thumbs {
+    display: flex;
+    gap: 0.6rem;
+    margin-block-start: 0.75rem;
+    overflow-x: auto;
+  }
+
+  .product-media__thumb {
+    flex-shrink: 0;
+    width: 4.5rem;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--style-border-radius-sm);
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+  }
+
+  .product-media__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-media__thumb.is-active {
+    border-color: var(--color-accent);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ProductMedia extends HTMLElement {
+    connectedCallback() {
+      this.slides = this.querySelectorAll('[data-media-id]');
+      this.querySelectorAll('[data-media-thumb]').forEach((thumb) => {
+        thumb.addEventListener('click', () => this.showMedia(thumb.dataset.mediaId));
+      });
+
+      document.addEventListener('variant:changed', (event) => {
+        const mediaId = event.detail?.variant?.featured_media?.id;
+        if (mediaId) this.showMedia(String(mediaId));
+      });
+    }
+
+    showMedia(mediaId) {
+      this.querySelectorAll('.product-media__slide').forEach((slide) => {
+        const active = slide.dataset.mediaId === mediaId;
+        slide.hidden = !active;
+        slide.classList.toggle('is-active', active);
+      });
+
+      this.querySelectorAll('[data-media-thumb]').forEach((thumb) => {
+        const active = thumb.dataset.mediaId === mediaId;
+        thumb.classList.toggle('is-active', active);
+        thumb.setAttribute('aria-selected', String(active));
+      });
+    }
+  }
+
+  if (!customElements.get('product-media')) {
+    customElements.define('product-media', ProductMedia);
+  }
+{% endjavascript %}

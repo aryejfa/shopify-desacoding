@@ -1,0 +1,100 @@
+{% comment %}
+  Newsletter sign-up using Shopify's native customer form (tags the customer
+  "newsletter"). Shows real success/error states from the form object; no
+  custom backend or JavaScript is required for it to work.
+{% endcomment %}
+
+<div class="newsletter full-width">
+  <div class="newsletter__content">
+    <div class="section-header section-header--center">
+      {% if section.settings.heading != blank %}
+        <h2 class="section-header__heading h2">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <p class="section-header__description">{{ section.settings.description }}</p>
+      {% endif %}
+    </div>
+
+    {% form 'customer', id: 'newsletter-form', class: 'newsletter__form' %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+
+      <div class="newsletter__field-row">
+        <label for="newsletter-email" class="visually-hidden">{{ 'newsletter.email_label' | t }}</label>
+        <input
+          type="email"
+          name="contact[email]"
+          id="newsletter-email"
+          class="field__input"
+          placeholder="{{ 'newsletter.email_placeholder' | t }}"
+          value="{{ form.email }}"
+          required
+        >
+        <button type="submit" class="btn">{{ 'newsletter.submit' | t }}</button>
+      </div>
+
+      {% if form.posted_successfully? %}
+        <p class="field__message field__message--success" role="status">{{ 'newsletter.success' | t }}</p>
+      {% elsif form.errors %}
+        <div class="field__message" role="alert">{{ form.errors | default_errors }}</div>
+      {% endif %}
+    {% endform %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .newsletter {
+    background: var(--color-background);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .newsletter__content {
+    max-width: 34rem;
+    margin-inline: auto;
+    padding-block: var(--section-spacing);
+    text-align: center;
+  }
+
+  .newsletter__form {
+    margin-block-start: 1.5rem;
+  }
+
+  .newsletter__field-row {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .newsletter__field-row .field__input {
+    flex: 1;
+  }
+
+  .newsletter__form .field__message {
+    margin-block-start: 0.75rem;
+  }
+
+  @media screen and (max-width: 599px) {
+    .newsletter__field-row {
+      flex-direction: column;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Dapatkan tips & penawaran terbaru"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "t:labels.description",
+      "default": "Berlangganan untuk mendapat info kelas, produk, dan promo dari Desa Coding."
+    }
+  ],
+  "presets": [{ "name": "t:general.newsletter" }]
+}
+{% endschema %}

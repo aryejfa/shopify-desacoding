@@ -1,0 +1,79 @@
+{% doc %}
+  Renders a single trust/benefit item: icon, title and description. Used
+  inside the "Trust & benefits" section.
+
+  @example
+  {% content_for 'block', type: 'benefit', id: 'benefit-1' %}
+{% enddoc %}
+
+<div class="benefit" {{ block.shopify_attributes }}>
+  <div class="benefit__icon">
+    {% render 'icon', name: block.settings.icon, class: 'icon--lg' %}
+  </div>
+  {% if block.settings.title != blank %}
+    <h3 class="benefit__title h6">{{ block.settings.title }}</h3>
+  {% endif %}
+  {% if block.settings.description != blank %}
+    <p class="benefit__description text-secondary">{{ block.settings.description }}</p>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .benefit {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .benefit__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--style-border-radius);
+    background: color-mix(in srgb, var(--color-accent) 10%, white);
+    color: var(--color-accent);
+    margin-block-end: 0.25rem;
+  }
+
+  .benefit__title,
+  .benefit__description {
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.benefit",
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:labels.icon",
+      "options": [
+        { "value": "shield-check", "label": "Shield" },
+        { "value": "truck", "label": "Truck" },
+        { "value": "life-buoy", "label": "Support" },
+        { "value": "sparkles", "label": "Sparkles" },
+        { "value": "check", "label": "Check" },
+        { "value": "star", "label": "Star" }
+      ],
+      "default": "shield-check"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.heading",
+      "default": "Produk berkualitas"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "t:labels.description",
+      "default": "Dipilih dan diuji agar sesuai kebutuhan belajar dan berkarya Anda."
+    }
+  ],
+  "presets": [{ "name": "t:general.benefit" }]
+}
+{% endschema %}

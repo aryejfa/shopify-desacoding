@@ -1,0 +1,167 @@
+{% doc %}
+  Renders a small inline SVG icon from the theme's shared icon set.
+  Icons are decorative by default (`aria-hidden="true"`); pass an
+  accessible label via `title` when the icon is the only content of an
+  interactive element (e.g. an icon-only button).
+
+  @param {string} name - The icon to render.
+  @param {string} [class] - Optional class added to the wrapping svg, e.g. `icon--sm`
+  @param {string} [title] - Optional accessible label. Required if the icon isn't decorative.
+
+  @example
+  {% render 'icon', name: 'search' %}
+  {% render 'icon', name: 'close', title: 'Close' %}
+{% enddoc %}
+
+<span class="icon {{ class }}" {% unless title %}aria-hidden="true"{% endunless %}>
+  {% if title %}
+    <span class="visually-hidden">{{ title }}</span>
+  {% endif %}
+
+  {% case name %}
+    {% when 'search' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'cart' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+        <circle cx="10" cy="21" r="1.3" fill="currentColor" />
+        <circle cx="17" cy="21" r="1.3" fill="currentColor" />
+      </svg>
+    {% when 'account' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="12" cy="8" r="3.25" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <path d="M5.5 19a6.5 6.5 0 0 1 13 0" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'menu' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'close' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="m5 5 14 14M19 5 5 19" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'chevron-down' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'chevron-right' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'chevron-left' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'arrow-right' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M4 12h16M13 5l7 7-7 7" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'plus' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'minus' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5 12h14" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'trash' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-.8 12.1a2 2 0 0 1-2 1.9H9.8a2 2 0 0 1-2-1.9L7 7" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'star' %}
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 3.5l2.6 5.6 6 .7-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6-4.4-4.2 6-.7z" />
+      </svg>
+    {% when 'star-outline' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 3.5l2.6 5.6 6 .7-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6-4.4-4.2 6-.7z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+      </svg>
+    {% when 'shield-check' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 3.5 5 6v5.5c0 4.4 3 8 7 9 4-1 7-4.6 7-9V6z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+        <path d="m9 12.2 2.2 2.2L15.5 10" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'truck' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3 7h10v9H3zM13 10h4l3 3v3h-7z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+        <circle cx="7.5" cy="18" r="1.6" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <circle cx="17" cy="18" r="1.6" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+      </svg>
+    {% when 'life-buoy' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <path d="m6.2 6.2 3.3 3.3M17.8 6.2l-3.3 3.3M6.2 17.8l3.3-3.3M17.8 17.8l-3.3-3.3" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'sparkles' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M11 3.5 12.5 8l4.5 1.5-4.5 1.5L11 15.5 9.5 11 5 9.5 9.5 8z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+        <path d="M18 15.5 18.8 17.5 21 18.3 18.8 19.1 18 21.2 17.2 19.1 15 18.3 17.2 17.5z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+      </svg>
+    {% when 'mail' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <path d="m4.5 7 7.5 6 7.5-6" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'phone' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6 4h3l1.5 4-2 1.3a10 10 0 0 0 5.2 5.2L15 12.5l4 1.5v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4 5.2 2 2 0 0 1 6 4Z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+      </svg>
+    {% when 'map-pin' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 21s7-6.1 7-11.5a7 7 0 0 0-14 0C5 14.9 12 21 12 21Z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+        <circle cx="12" cy="9.5" r="2.3" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+      </svg>
+    {% when 'instagram' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <circle cx="17.2" cy="6.8" r="1" fill="currentColor" />
+      </svg>
+    {% when 'facebook' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M14 8.5h2V5.3h-2c-2 0-3.4 1.5-3.4 3.5v1.7H8.5v3.2h2.1V21h3.2v-7.3h2.2l.5-3.2h-2.7V9c0-.4.4-.5.7-.5Z" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linejoin="round" />
+      </svg>
+    {% when 'tiktok' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M14 4v10.2a2.8 2.8 0 1 1-2.5-2.8" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M14 4c.3 2 1.9 3.5 4 3.7" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    {% when 'youtube' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="3" y="6" width="18" height="12" rx="3" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <path d="M10.5 9.5v5l4.5-2.5z" fill="currentColor" />
+      </svg>
+    {% when 'twitter-x' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5 5l14 14M19 5 5 19" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'linkedin' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" stroke-width="var(--icon-stroke-width)" />
+        <circle cx="8" cy="8.2" r="1.1" fill="currentColor" />
+        <path d="M8 11.5v6M12 17.5v-3.7c0-1.3 1-2.3 2.3-2.3s2.2 1 2.2 2.3v3.7" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" />
+      </svg>
+    {% when 'check' %}
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="var(--icon-stroke-width)" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+  {% endcase %}
+</span>
+
+{% stylesheet %}
+  .icon {
+    display: inline-flex;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .icon svg {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}

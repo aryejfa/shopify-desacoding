@@ -1,0 +1,37 @@
+{% comment %}
+  Renders Shopify's native product recommendations for the current product.
+  The `recommendations` object is only populated when this section is
+  requested through `routes.product_recommendations_url` (see the fetch in
+  sections/product.liquid), so this markup is inert on a normal page load.
+{% endcomment %}
+
+{% if recommendations.performed? and recommendations.products_count > 0 %}
+  <div class="product-recommendations section-padding" data-section-id="product-recommendations">
+    <div class="product-recommendations__inner">
+      <div class="section-header">
+        <h2 class="section-header__heading h3">{{ 'products.recommendations_heading' | t }}</h2>
+      </div>
+
+      <div class="product-grid" style="--grid-cols-mobile: 2; --grid-cols-desktop: 4;">
+        {% for product in recommendations.products %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-recommendations__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.featured_products",
+  "settings": []
+}
+{% endschema %}

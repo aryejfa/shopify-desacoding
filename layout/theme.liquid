@@ -4,6 +4,9 @@
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
 
+    {% # Shared design-system stylesheet (typography, buttons, cards, utilities) %}
+    {% render 'base' %}
+
     {% comment %}
       Font preloading:
       1. Preconnect to font CDN for faster connection
@@ -20,17 +23,54 @@
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
+    {% if settings.favicon %}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {% endif %}
+
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
     {{ content_for_header }}
   </head>
 
-  <body>
+  <body
+    data-button-style="{{ settings.button_style }}"
+    data-cart-type="{{ settings.cart_type }}"
+    {% unless settings.enable_animations %}
+      data-animations="disabled"
+    {% endunless %}
+  >
+    <a href="#main-content" class="skip-link">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+    <script>
+      window.themeRoutes = {
+        cartAddUrl: {{ routes.cart_add_url | json }},
+        cartChangeUrl: {{ routes.cart_change_url | json }},
+        cartUrl: {{ routes.cart_url | json }},
+        searchUrl: {{ routes.search_url | json }},
+        predictiveSearchUrl: {{ routes.predictive_search_url | json }}
+      };
+      window.themeStrings = {
+        cartErrorGeneric: {{ 'cart.error_generic' | t | json }},
+        addedToCart: {{ 'products.added_to_cart' | t | json }},
+        searchNoResults: {{ 'search.no_results_html' | t: terms: '' | json }},
+        addToCart: {{ 'products.add_to_cart' | t | json }},
+        soldOut: {{ 'products.badges.sold_out' | t | json }},
+        inStock: {{ 'products.in_stock' | t | json }},
+        unavailable: {{ 'products.unavailable' | t | json }}
+      };
+    </script>
+
     {% sections 'header-group' %}
 
-    {{ content_for_layout }}
+    <main id="main-content">
+      {{ content_for_layout }}
+    </main>
 
     {% sections 'footer-group' %}
+
+    {% if settings.cart_type == 'drawer' %}
+      {% section 'cart-drawer' %}
+    {% endif %}
   </body>
 </html>
