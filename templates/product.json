@@ -11,10 +11,20 @@
   "sections": {
     "main": {
       "type": "product",
-      "settings": {}
+      "blocks": {
+        "accordion-1": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Pengiriman & pengembalian",
+            "content": "<p>Estimasi pengiriman dan kebijakan pengembalian mengikuti ketentuan toko.</p>"
+          }
+        }
+      },
+      "block_order": ["accordion-1"],
+      "settings": {
+        "show_dynamic_checkout": true
+      }
     }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["main"]
 }

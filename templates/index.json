@@ -9,12 +9,196 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "settings": {}
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "Desa Coding",
+        "heading": "Belajar, Berkarya, dan Tumbuh Bersama Teknologi",
+        "description": "Temukan produk, kelas, dan solusi digital yang membantu meningkatkan kemampuan serta produktivitas Anda.",
+        "cta_label": "Lihat Produk",
+        "cta_link": "",
+        "secondary_cta_label": "Pelajari Lebih Lanjut",
+        "secondary_cta_link": "",
+        "image": "shopify://shop_images/Go-Lang.jpg",
+        "overlay_opacity": 35,
+        "content_position": "hero--content-left"
+      }
+    },
+    "trust-benefits": {
+      "type": "trust-benefits",
+      "blocks": {
+        "benefit-1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield-check",
+            "title": "Produk berkualitas",
+            "description": "Dipilih dan diuji agar sesuai kebutuhan belajar dan berkarya Anda."
+          },
+          "blocks": {}
+        },
+        "benefit-2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "check",
+            "title": "Pembayaran aman",
+            "description": "Transaksi terenkripsi melalui Shopify Checkout yang terpercaya."
+          },
+          "blocks": {}
+        },
+        "benefit-3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "life-buoy",
+            "title": "Dukungan terpercaya",
+            "description": "Tim kami siap membantu sebelum dan sesudah Anda membeli."
+          },
+          "blocks": {}
+        },
+        "benefit-4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "sparkles",
+            "title": "Akses & proses mudah",
+            "description": "Belanja, checkout, hingga akses materi dalam beberapa langkah saja."
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "benefit-1",
+        "benefit-2",
+        "benefit-3",
+        "benefit-4"
+      ],
+      "settings": {
+        "heading": "Kenapa belajar bersama Desa Coding"
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Produk pilihan",
+        "description": "",
+        "collection": "frontpage",
+        "view_all_label": "Lihat semua",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "columns_mobile": "2"
+      }
+    },
+    "promotional-banner": {
+      "type": "promotional-banner",
+      "settings": {
+        "image": "shopify://shop_images/java.jpg",
+        "image_position": "promo-banner--image-left",
+        "eyebrow": "Kelas baru",
+        "heading": "Tingkatkan kemampuan coding Anda",
+        "description": "Ikuti kelas dan produk digital terbaru dari Desa Coding, dirancang untuk pemula hingga tingkat lanjut.",
+        "cta_label": "Jelajahi sekarang",
+        "cta_link": ""
+      }
+    },
+    "featured-products": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "Rekomendasi untuk Anda",
+        "description": "",
+        "products": [
+          "shoes-goods",
+          "long-jeans",
+          "sock-basic",
+          "tshirt-basic"
+        ]
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "testimonial-1": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Materinya sangat mudah dipahami dan langsung bisa dipraktikkan. Sangat membantu proses belajar saya.",
+            "name": "Nama pelanggan",
+            "role": "Pelajar"
+          },
+          "blocks": {}
+        },
+        "testimonial-2": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Materinya sangat mudah dipahami dan langsung bisa dipraktikkan. Sangat membantu proses belajar saya.",
+            "name": "Nama pelanggan",
+            "role": "Pelajar"
+          },
+          "blocks": {}
+        },
+        "testimonial-3": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Materinya sangat mudah dipahami dan langsung bisa dipraktikkan. Sangat membantu proses belajar saya.",
+            "name": "Nama pelanggan",
+            "role": "Pelajar"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "testimonial-1",
+        "testimonial-2",
+        "testimonial-3"
+      ],
+      "settings": {
+        "heading": "Kata mereka yang sudah belajar bersama kami"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "faq-1": {
+          "type": "faq-item",
+          "settings": {
+            "question": "Bagaimana cara memesan produk?",
+            "answer": "<p>Pilih produk yang Anda inginkan, tambahkan ke keranjang, lalu selesaikan pembayaran melalui checkout Shopify yang aman.</p>"
+          },
+          "blocks": {}
+        },
+        "faq-2": {
+          "type": "faq-item",
+          "settings": {
+            "question": "Metode pembayaran apa saja yang tersedia?",
+            "answer": "<p>Kami mendukung berbagai metode pembayaran melalui Shopify Checkout, termasuk kartu kredit/debit dan metode lokal yang diaktifkan toko.</p>"
+          },
+          "blocks": {}
+        },
+        "faq-3": {
+          "type": "faq-item",
+          "settings": {
+            "question": "Bagaimana jika saya butuh bantuan?",
+            "answer": "<p>Tim dukungan kami siap membantu melalui informasi kontak yang tertera di bagian footer situs.</p>"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "faq-1",
+        "faq-2",
+        "faq-3"
+      ],
+      "settings": {
+        "heading": "Pertanyaan yang sering diajukan"
+      }
     }
   },
   "order": [
-    "main"
+    "hero",
+    "trust-benefits",
+    "featured-collection",
+    "promotional-banner",
+    "featured-products",
+    "testimonials",
+    "faq"
   ]
 }

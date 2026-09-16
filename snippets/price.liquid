@@ -1,0 +1,57 @@
+{% doc %}
+  Renders a product or variant price, including the compare-at price when the
+  item is on sale, or an "unavailable" state.
+
+  @param {product} [product] - The product to render a price range for
+  @param {variant} [variant] - A specific variant; takes priority over `product`
+  @param {boolean} [show_unavailable] - Show an "Unavailable" label when there's no price to show
+
+  @example
+  {% render 'price', product: product %}
+  {% render 'price', variant: product.selected_or_first_available_variant %}
+{% enddoc %}
+
+{% liquid
+  assign target = variant | default: product
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price
+  assign available = target.available | default: true
+
+  if product and variant == blank and target == product
+    assign price = product.price_min
+    assign compare_at_price = blank
+    if product.compare_at_price_min > product.price_min
+      assign compare_at_price = product.compare_at_price_min
+    endif
+    assign available = product.available
+  endif
+
+  assign on_sale = false
+  if compare_at_price > price
+    assign on_sale = true
+  endif
+%}
+
+{% if target == blank and show_unavailable %}
+  <span class="price price--unavailable">{{ 'products.price.unavailable' | t }}</span>
+{% elsif target %}
+  <span class="price {% if on_sale %}price--on-sale{% endif %}">
+    {% if on_sale %}
+      <span class="visually-hidden">{{ 'products.price.sale_price' | t }}</span>
+      <span class="price__regular">{{ price | money }}</span>
+      <span class="visually-hidden">{{ 'products.price.regular_price' | t }}</span>
+      <span class="price__compare">{{ compare_at_price | money }}</span>
+    {% else %}
+      {% if product.price_varies and variant == blank %}
+        <span class="visually-hidden">{{ 'products.price.from_price' | t }}</span>
+        {{ 'products.price.from' | t: price: price | money }}
+      {% else %}
+        {{ price | money }}
+      {% endif %}
+    {% endif %}
+
+    {% unless available %}
+      <span class="text-secondary text-sm">{{ 'products.price.sold_out' | t }}</span>
+    {% endunless %}
+  </span>
+{% endif %}

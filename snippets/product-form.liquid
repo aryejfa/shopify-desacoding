@@ -1,0 +1,292 @@
+{% doc %}
+  Renders the full add-to-cart experience for a product: variant picker,
+  quantity selector, add-to-cart button and dynamic checkout button. Keeps
+  a real `<select name="id">` as a `<noscript>` fallback so purchasing still
+  works if JavaScript fails to load.
+
+  @param {product} product - The product to render a form for
+  @param {boolean} [show_dynamic_checkout] - Show Shopify's dynamic checkout (e.g. Shop Pay) button
+
+  @example
+  {% render 'product-form', product: product, show_dynamic_checkout: true %}
+{% enddoc %}
+
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign t_in_stock = 'products.in_stock' | t
+%}
+
+<product-form data-product-form-root data-product-handle="{{ product.handle }}">
+  {% form 'product', product, data-product-form: true, class: 'product-form' %}
+    <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id-input>
+
+    <div class="product-form__price" data-product-price>
+      {% render 'price', variant: current_variant %}
+    </div>
+
+    {% unless product.has_only_default_variant %}
+      {% for option in product.options_with_values %}
+        <fieldset class="product-form__option" data-option-position="{{ option.position }}">
+          <legend class="field__label">{{ option.name }}: <span data-selected-value>{{ option.selected_value }}</span></legend>
+          <div class="product-form__option-values">
+            {% for value in option.values %}
+              <input
+                type="radio"
+                id="option-{{ option.position }}-{{ forloop.index0 }}"
+                name="options[{{ option.name | escape }}]"
+                value="{{ value | escape }}"
+                class="product-form__option-input"
+                {% if option.selected_value == value %}checked{% endif %}
+                data-option-value
+              >
+              <label for="option-{{ option.position }}-{{ forloop.index0 }}" class="product-form__option-label">
+                {{ value }}
+              </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+      {% endfor %}
+
+      <noscript>
+        <div class="field">
+          <label for="variant-select-noscript" class="field__label">{{ 'products.select_option' | t }}</label>
+          <select name="id" id="variant-select-noscript" class="field__input">
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" {% if variant == current_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                {{ variant.title }} - {{ variant.price | money }}{% unless variant.available %} ({{ 'products.badges.sold_out' | t }}){% endunless %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </noscript>
+    {% endunless %}
+
+    <div class="product-form__quantity field">
+      <label for="quantity-{{ product.id }}" class="field__label">{{ 'products.quantity' | t }}</label>
+      <div class="quantity-selector">
+        <button type="button" class="quantity-selector__button" data-quantity-decrease aria-label="{{ 'general.accessibility.decrease_quantity' | t }}">
+          {% render 'icon', name: 'minus' %}
+        </button>
+        <input
+          type="number"
+          name="quantity"
+          id="quantity-{{ product.id }}"
+          class="quantity-selector__input"
+          min="1"
+          value="1"
+          inputmode="numeric"
+          data-quantity-input
+        >
+        <button type="button" class="quantity-selector__button" data-quantity-increase aria-label="{{ 'general.accessibility.increase_quantity' | t }}">
+          {% render 'icon', name: 'plus' %}
+        </button>
+      </div>
+    </div>
+
+    <p class="product-form__availability text-sm" data-product-availability>
+      {% if current_variant.available %}
+        {% render 'badge', type: 'success', text: t_in_stock %}
+      {% else %}
+        {% render 'badge', type: 'sold_out' %}
+      {% endif %}
+    </p>
+
+    <div class="product-form__actions">
+      <button
+        type="submit"
+        name="add"
+        class="btn btn--lg btn--block"
+        data-add-to-cart
+        {% unless current_variant.available %}disabled{% endunless %}
+      >
+        <span data-add-to-cart-label>
+          {% if current_variant.available %}
+            {{ 'products.add_to_cart' | t }}
+          {% else %}
+            {{ 'products.badges.sold_out' | t }}
+          {% endif %}
+        </span>
+      </button>
+
+      {% if show_dynamic_checkout %}
+        {{ form | payment_button }}
+      {% endif %}
+    </div>
+
+    <p class="field__message" data-form-error role="alert" hidden></p>
+  {% endform %}
+</product-form>
+
+{% stylesheet %}
+  .product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .product-form__option {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .product-form__option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .product-form__option-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .product-form__option-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--style-border-radius-full);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .product-form__option-input:checked + .product-form__option-label {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .product-form__option-input:disabled + .product-form__option-label {
+    opacity: 0.4;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+
+  .product-form__option-input:focus-visible + .product-form__option-label {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .product-form__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .product-form [data-form-error]:not([hidden]) {
+    color: var(--color-error);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ProductForm extends HTMLElement {
+    connectedCallback() {
+      this.form = this.querySelector('[data-product-form]');
+      this.variantInput = this.querySelector('[data-variant-id-input]');
+      this.addButton = this.querySelector('[data-add-to-cart]');
+      this.priceWrapper = this.querySelector('[data-product-price]');
+      this.availabilityWrapper = this.querySelector('[data-product-availability]');
+
+      this.querySelectorAll('[data-option-value]').forEach((input) => {
+        input.addEventListener('change', () => this.handleOptionChange());
+      });
+
+      this.querySelector('[data-quantity-decrease]')?.addEventListener('click', () => this.stepQuantity(-1));
+      this.querySelector('[data-quantity-increase]')?.addEventListener('click', () => this.stepQuantity(1));
+    }
+
+    stepQuantity(delta) {
+      const input = this.querySelector('[data-quantity-input]');
+      const next = Math.max(1, (parseInt(input.value, 10) || 1) + delta);
+      input.value = next;
+    }
+
+    getSelectedOptions() {
+      const fieldsets = this.querySelectorAll('[data-option-position]');
+      return Array.from(fieldsets)
+        .sort((a, b) => a.dataset.optionPosition - b.dataset.optionPosition)
+        .map((fieldset) => fieldset.querySelector('[data-option-value]:checked')?.value);
+    }
+
+    async handleOptionChange() {
+      const handle = this.dataset.productHandle;
+      const response = await fetch(`/products/${handle}.js`);
+      const product = await response.json();
+      const selected = this.getSelectedOptions();
+
+      const matchedVariant = product.variants.find((variant) =>
+        variant.options.every((value, index) => value === selected[index])
+      );
+
+      this.updateOptionAvailability(product, selected);
+
+      if (matchedVariant) {
+        this.updateForVariant(matchedVariant);
+      } else {
+        this.setUnavailable();
+      }
+
+      document.dispatchEvent(new CustomEvent('variant:changed', { detail: { variant: matchedVariant, product } }));
+    }
+
+    updateOptionAvailability(product, selected) {
+      this.querySelectorAll('[data-option-position]').forEach((fieldset, position) => {
+        fieldset.querySelectorAll('[data-option-value]').forEach((input) => {
+          const candidate = [...selected];
+          candidate[position] = input.value;
+          const exists = product.variants.some(
+            (variant) => variant.options.every((value, index) => value === candidate[index]) && variant.available
+          );
+          input.disabled = !exists;
+        });
+      });
+    }
+
+    updateForVariant(variant) {
+      this.variantInput.value = variant.id;
+      this.addButton.disabled = !variant.available;
+      this.addButton.querySelector('[data-add-to-cart-label]').textContent = variant.available
+        ? window.themeStrings.addToCart
+        : window.themeStrings.soldOut;
+
+      if (this.priceWrapper) {
+        this.priceWrapper.innerHTML = variant.compare_at_price > variant.price
+          ? `<span class="price price--on-sale"><span class="price__regular">${this.formatMoney(
+              variant.price
+            )}</span><span class="price__compare">${this.formatMoney(variant.compare_at_price)}</span></span>`
+          : `<span class="price">${this.formatMoney(variant.price)}</span>`;
+      }
+
+      if (this.availabilityWrapper) {
+        this.availabilityWrapper.innerHTML = variant.available
+          ? `<span class="badge badge--success">${window.themeStrings.inStock}</span>`
+          : `<span class="badge badge--sold-out">${window.themeStrings.soldOut}</span>`;
+      }
+    }
+
+    setUnavailable() {
+      this.addButton.disabled = true;
+      this.addButton.querySelector('[data-add-to-cart-label]').textContent = window.themeStrings.unavailable;
+    }
+
+    formatMoney(cents) {
+      return (cents / 100).toLocaleString(document.documentElement.lang || 'en', {
+        style: 'currency',
+        currency: window.Shopify?.currency?.active || 'USD',
+      });
+    }
+  }
+
+  if (!customElements.get('product-form')) {
+    customElements.define('product-form', ProductForm);
+  }
+{% endjavascript %}

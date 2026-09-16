@@ -1,0 +1,36 @@
+{% doc %}
+  Renders a single FAQ question/answer as a native, keyboard-accessible
+  accordion (no JavaScript required).
+
+  @example
+  {% content_for 'block', type: 'faq-item', id: 'faq-1' %}
+{% enddoc %}
+
+<details class="accordion" {{ block.shopify_attributes }}>
+  <summary class="accordion__summary">
+    <span>{{ block.settings.question }}</span>
+    {% render 'icon', name: 'chevron-down', class: 'accordion__icon' %}
+  </summary>
+  <div class="accordion__content">{{ block.settings.answer }}</div>
+</details>
+
+{% schema %}
+{
+  "name": "t:general.faq_item",
+  "settings": [
+    {
+      "type": "text",
+      "id": "question",
+      "label": "t:labels.question",
+      "default": "Bagaimana cara memesan produk?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer",
+      "label": "t:labels.answer",
+      "default": "<p>Pilih produk yang Anda inginkan, tambahkan ke keranjang, lalu selesaikan pembayaran melalui checkout Shopify yang aman.</p>"
+    }
+  ],
+  "presets": [{ "name": "t:general.faq_item" }]
+}
+{% endschema %}

@@ -1,0 +1,68 @@
+{% comment %}
+  Renders predictive search suggestions. The `predictive_search` object is
+  only populated when this section is requested through
+  `routes.predictive_search_url` (see the fetch in sections/header.liquid);
+  on a normal page load this section renders nothing.
+{% endcomment %}
+
+{% if predictive_search.performed %}
+  <div id="predictive-search-results">
+    {% liquid
+      assign has_results = false
+      if predictive_search.resources.products.size > 0 or predictive_search.resources.pages.size > 0 or predictive_search.resources.articles.size > 0
+        assign has_results = true
+      endif
+    %}
+
+    {% if has_results %}
+      {% if predictive_search.resources.products.size > 0 %}
+        <p class="predictive-search__group-title text-secondary text-sm" id="predictive-search-products">
+          {{ 'general.search.products' | t }}
+        </p>
+        <ul class="predictive-search-results" role="listbox" aria-labelledby="predictive-search-products">
+          {% for product in predictive_search.resources.products %}
+            <li role="option">
+              <a href="{{ product.url }}">
+                {% if product.featured_image %}
+                  {{ product.featured_image | image_url: width: 96 | image_tag: width: 48, height: 48, alt: '', loading: 'lazy' }}
+                {% endif %}
+                <span>
+                  <span class="predictive-search-result__title">{{ product.title }}</span>
+                  {% render 'price', product: product %}
+                </span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if predictive_search.resources.pages.size > 0 or predictive_search.resources.articles.size > 0 %}
+        <ul class="predictive-search-results">
+          {% for page_result in predictive_search.resources.pages %}
+            <li role="option"><a href="{{ page_result.url }}">{{ page_result.title }}</a></li>
+          {% endfor %}
+          {% for article in predictive_search.resources.articles %}
+            <li role="option"><a href="{{ article.url }}">{{ article.title }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% else %}
+      <p class="text-secondary text-sm">{{ 'search.no_results_html' | t: terms: predictive_search.terms }}</p>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .predictive-search__group-title {
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.search",
+  "settings": []
+}
+{% endschema %}

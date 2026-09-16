@@ -1,39 +1,357 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{% comment %}
+  Site footer: brand blurb, configurable navigation columns (blocks), contact
+  information, social links, store policies and payment icons.
+{% endcomment %}
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+{% liquid
+  assign social_links = ''
+  if settings.social_instagram != blank
+    assign social_links = social_links | append: 'instagram,'
+  endif
+  if settings.social_facebook != blank
+    assign social_links = social_links | append: 'facebook,'
+  endif
+  if settings.social_tiktok != blank
+    assign social_links = social_links | append: 'tiktok,'
+  endif
+  if settings.social_youtube != blank
+    assign social_links = social_links | append: 'youtube,'
+  endif
+  if settings.social_x != blank
+    assign social_links = social_links | append: 'twitter-x,'
+  endif
+  if settings.social_linkedin != blank
+    assign social_links = social_links | append: 'linkedin,'
+  endif
+%}
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
+<footer class="site-footer full-width">
+  <div class="site-footer__inner">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a href="{{ routes.root_url }}" class="site-header__logo">
+          {% if settings.logo %}
+            {{ settings.logo | image_url: width: 140 | image_tag: alt: shop.name, class: 'site-header__logo-image' }}
+          {% else %}
+            <span class="site-header__logo-text">{{ shop.name }}</span>
+          {% endif %}
+        </a>
+
+        {% if section.settings.description != blank %}
+          <p class="site-footer__description">{{ section.settings.description }}</p>
+        {% endif %}
+
+        {% if social_links != '' %}
+          <ul class="site-footer__social">
+            {% assign social_link_list = social_links | split: ',' %}
+            {% for name in social_link_list %}
+              {% liquid
+                assign social_url = settings.social_x
+                case name
+                  when 'instagram'
+                    assign social_url = settings.social_instagram
+                  when 'facebook'
+                    assign social_url = settings.social_facebook
+                  when 'tiktok'
+                    assign social_url = settings.social_tiktok
+                  when 'youtube'
+                    assign social_url = settings.social_youtube
+                  when 'linkedin'
+                    assign social_url = settings.social_linkedin
+                endcase
+              %}
+              <li>
+                <a href="{{ social_url }}" aria-label="{{ name | capitalize }}" target="_blank" rel="noopener">
+                  {% render 'icon', name: name %}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      {% for block in section.blocks %}
+        {% if block.type == 'menu' %}
+          <div class="site-footer__column" {{ block.shopify_attributes }}>
+            {% if block.settings.title != blank %}
+              <h3 class="site-footer__heading">{{ block.settings.title }}</h3>
+            {% endif %}
+            {% if block.settings.menu.links.size > 0 %}
+              <ul class="site-footer__links">
+                {% for link in block.settings.menu.links %}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        {% endif %}
       {% endfor %}
+
+      {% if settings.contact_email != blank or settings.contact_phone != blank or settings.contact_address != blank %}
+        <div class="site-footer__column">
+          <h3 class="site-footer__heading">{{ 'footer.contact_us' | t }}</h3>
+          <ul class="site-footer__contact">
+            {% if settings.contact_address != blank %}
+              <li>{% render 'icon', name: 'map-pin', class: 'icon--sm' %} {{ settings.contact_address }}</li>
+            {% endif %}
+            {% if settings.contact_phone != blank %}
+              <li>
+                <a href="tel:{{ settings.contact_phone | remove: ' ' }}">
+                  {% render 'icon', name: 'phone', class: 'icon--sm' %} {{ settings.contact_phone }}
+                </a>
+              </li>
+            {% endif %}
+            {% if settings.contact_email != blank %}
+              <li>
+                <a href="mailto:{{ settings.contact_email }}">
+                  {% render 'icon', name: 'mail', class: 'icon--sm' %} {{ settings.contact_email }}
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if shop.policies.size > 0 %}
+      <div class="site-footer__policies">
+        {% for policy in shop.policies %}
+          <a href="{{ policy.url }}">{{ policy.title }}</a>
+        {% endfor %}
+      </div>
     {% endif %}
+
+    {% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %}
+      <div class="site-footer__localization">
+        {% if localization.available_languages.size > 1 %}
+          {% form 'localization', class: 'localization-form' %}
+            <label class="visually-hidden" for="footer-language-select">{{ 'footer.language' | t }}</label>
+            <select name="locale_code" id="footer-language-select" class="localization-form__select" data-localization-select>
+              {% for language in localization.available_languages %}
+                <option
+                  value="{{ language.iso_code }}"
+                  lang="{{ language.iso_code }}"
+                  {% if language.iso_code == localization.language.iso_code %}selected{% endif %}
+                >
+                  {{ language.endonym_name | capitalize }}
+                </option>
+              {% endfor %}
+            </select>
+            <noscript><button type="submit" class="btn btn--secondary btn--sm">{{ 'footer.update' | t }}</button></noscript>
+          {% endform %}
+        {% endif %}
+
+        {% if localization.available_countries.size > 1 %}
+          {% form 'localization', class: 'localization-form' %}
+            <label class="visually-hidden" for="footer-country-select">{{ 'footer.country_region' | t }}</label>
+            <select name="country_code" id="footer-country-select" class="localization-form__select" data-localization-select>
+              {% for country in localization.available_countries %}
+                <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                  {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                </option>
+              {% endfor %}
+            </select>
+            <noscript><button type="submit" class="btn btn--secondary btn--sm">{{ 'footer.update' | t }}</button></noscript>
+          {% endform %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="site-footer__bottom">
+      <p class="site-footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
+      </p>
+
+      {% if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 %}
+        <ul class="site-footer__payment">
+          {% for type in shop.enabled_payment_types %}
+            <li>{{ type | payment_type_svg_tag: class: 'site-footer__payment-icon' }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
   </div>
 </footer>
 
+{% javascript %}
+  document.querySelectorAll('[data-localization-select]').forEach((select) => {
+    select.addEventListener('change', (event) => event.target.form.requestSubmit());
+  });
+{% endjavascript %}
+
 {% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
+  .site-footer {
+    background: var(--color-primary);
+    color: color-mix(in srgb, white 85%, var(--color-primary));
+    margin-block-start: auto;
   }
-  footer a {
+
+  .site-footer__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: clamp(2.5rem, 2rem + 2vw, 4rem) var(--page-margin) 2rem;
+  }
+
+  .site-footer a {
+    color: inherit;
+  }
+
+  .site-footer .site-header__logo-text,
+  .site-footer .site-header__logo-image {
+    filter: brightness(0) invert(1);
+  }
+
+  .site-footer__grid {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(auto-fit, minmax(9rem, 1fr));
+    gap: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    padding-block-end: 2.5rem;
+    border-block-end: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .site-footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 26rem;
+  }
+
+  .site-footer__description {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+
+  .site-footer__social {
+    display: flex;
+    gap: 0.75rem;
+    list-style: none;
+  }
+
+  .site-footer__social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: var(--style-border-radius-full);
     text-decoration: none;
+  }
+
+  .site-footer__social a:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .site-footer__heading {
+    font-size: 0.9375rem;
+    margin-block-end: 1rem;
+  }
+
+  .site-footer__links,
+  .site-footer__contact {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .site-footer__links a,
+  .site-footer__contact a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .site-footer__contact li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .site-footer__links a:hover,
+  .site-footer__contact a:hover {
+    color: #fff;
+  }
+
+  .site-footer__policies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    padding-block: 1.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .site-footer__policies a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .site-footer__policies a:hover {
+    color: #fff;
+  }
+
+  .site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .site-footer__copyright a {
+    text-decoration: underline;
+  }
+
+  .site-footer__payment {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+  }
+
+  .site-footer__payment-icon {
+    height: 1.5rem;
+    width: auto;
+    border-radius: 0.25rem;
+  }
+
+  .site-footer__localization {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-block: 1.25rem;
+    border-block-start: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .localization-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .localization-form__select {
+    background: transparent;
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: var(--style-border-radius-inputs);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .localization-form__select option {
     color: var(--color-foreground);
   }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
+
+  @media screen and (max-width: 749px) {
+    .site-footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .site-footer__brand {
+      grid-column: 1 / -1;
+    }
   }
 {% endstylesheet %}
 
@@ -42,15 +360,42 @@
   "name": "t:general.footer",
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "richtext",
+      "id": "description",
+      "label": "t:labels.description",
+      "default": "<p>Desa Coding membantu Anda belajar, berkarya, dan tumbuh bersama teknologi.</p>"
     },
     {
       "type": "checkbox",
       "id": "show_payment_icons",
       "label": "t:labels.show_payment_icons",
       "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "t:general.column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:labels.heading",
+          "default": "Quick links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "t:labels.menu"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "t:general.footer",
+      "blocks": [{ "type": "menu" }, { "type": "menu" }]
     }
   ]
 }

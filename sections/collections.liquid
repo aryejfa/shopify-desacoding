@@ -5,36 +5,52 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
 {% endcomment %}
 
-<h1>{{ 'collections.title' | t }}</h1>
+<div class="collections-page section-padding full-width">
+  <div class="collections-page__inner">
+    <div class="section-header">
+      <h1 class="section-header__heading h2">{{ 'collections.title' | t }}</h1>
+    </div>
 
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
+    <div
+      class="collections {{ section.settings.grid_item_width }}"
+      style="--grid-gap: {{ section.settings.grid_gap }}px"
+    >
+      {% for collection in collections %}
+        <a class="collection-card card" href="{{ collection.url }}">
+          {% if collection.featured_image %}
+            {% render 'image',
+              class: 'collection-card__image',
+              image: collection.featured_image,
+              width: 600,
+              height: 600,
+              crop: 'center'
+            %}
+          {% else %}
+            <div class="collection-card__image collection-card__placeholder">
+              {{ 'collection' | placeholder_svg_tag: 'collection-card__placeholder-svg' }}
+            </div>
+          {% endif %}
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
+          <div class="collection-card__content">
+            <p class="collection-card__title">{{ collection.title }}</p>
 
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
+            {% if collection.description %}
+              <p class="text-secondary text-sm">{{ collection.description | strip_html | truncatewords: 15 }}</p>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
 {% stylesheet %}
+  .collections-page__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
   .collections {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
@@ -50,6 +66,34 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: box-shadow var(--motion-duration) var(--motion-ease);
+  }
+  .collection-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+  .collection-card__image {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    width: 100%;
+  }
+  .collection-card__placeholder {
+    display: flex;
+    background: var(--color-background);
+  }
+  .collection-card__placeholder-svg {
+    width: 100%;
+    height: 100%;
+    color: var(--color-border);
+  }
+  .collection-card__content {
+    padding: 1rem;
+  }
+  .collection-card__title {
+    font-weight: 600;
+    margin: 0 0 0.25rem;
   }
 {% endstylesheet %}
 

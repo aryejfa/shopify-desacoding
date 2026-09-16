@@ -1,0 +1,194 @@
+{% comment %}
+  A slim, editable announcement bar shown above the header. Supports
+  multiple rotating announcements via blocks; merchants can enable/disable
+  it entirely using the section's built-in visibility toggle in the
+  Theme Editor.
+{% endcomment %}
+
+{% liquid
+  assign announcement_count = section.blocks.size
+  assign t_previous = 'general.accessibility.previous' | t
+  assign t_next = 'general.accessibility.next' | t
+%}
+
+{% if announcement_count > 0 %}
+  <announcement-bar
+    class="announcement-bar full-width"
+    style="
+      --announcement-bg: {{ section.settings.background_color | default: settings.color_primary }};
+      --announcement-color: {{ section.settings.text_color | default: '#FFFFFF' }};
+    "
+  >
+    <div class="announcement-bar__inner">
+      {% if announcement_count > 1 %}
+        <button type="button" class="announcement-bar__control" data-announcement-prev>
+          {% render 'icon', name: 'chevron-left', title: t_previous %}
+        </button>
+      {% endif %}
+
+      <ul class="announcement-bar__list" {% if announcement_count > 1 %}role="list" aria-live="polite"{% endif %}>
+        {% for block in section.blocks %}
+          <li
+            class="announcement-bar__item"
+            {% if forloop.first == false %}hidden{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+            {% else %}
+              <span>{{ block.settings.text }}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if announcement_count > 1 %}
+        <button type="button" class="announcement-bar__control" data-announcement-next>
+          {% render 'icon', name: 'chevron-right', title: t_next %}
+        </button>
+      {% endif %}
+    </div>
+  </announcement-bar>
+{% endif %}
+
+{% stylesheet %}
+  .announcement-bar {
+    display: block;
+    background: var(--announcement-bg);
+    color: var(--announcement-color);
+  }
+
+  .announcement-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: 0.6rem var(--page-margin);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .announcement-bar__list {
+    list-style: none;
+    display: grid;
+    text-align: center;
+  }
+
+  .announcement-bar__item {
+    grid-area: 1 / 1;
+  }
+
+  .announcement-bar a,
+  .announcement-bar span {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .announcement-bar a:hover {
+    text-decoration: underline;
+  }
+
+  .announcement-bar__control {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    padding: 0.2rem;
+    opacity: 0.8;
+  }
+
+  .announcement-bar__control:hover {
+    opacity: 1;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class AnnouncementBar extends HTMLElement {
+    connectedCallback() {
+      this.items = Array.from(this.querySelectorAll('.announcement-bar__item'));
+      this.current = 0;
+
+      this.querySelector('[data-announcement-prev]')?.addEventListener('click', () => this.show(this.current - 1));
+      this.querySelector('[data-announcement-next]')?.addEventListener('click', () => this.show(this.current + 1));
+
+      this.addEventListener('mouseenter', () => this.stop());
+      this.addEventListener('mouseleave', () => this.start());
+      this.addEventListener('focusin', () => this.stop());
+      this.addEventListener('focusout', () => this.start());
+
+      this.start();
+    }
+
+    show(index) {
+      const total = this.items.length;
+      this.current = (index + total) % total;
+      this.items.forEach((item, i) => {
+        item.hidden = i !== this.current;
+      });
+    }
+
+    start() {
+      if (this.items.length <= 1 || document.body.dataset.animations === 'disabled') return;
+      this.stop();
+      this.timer = setInterval(() => this.show(this.current + 1), 6000);
+    }
+
+    stop() {
+      clearInterval(this.timer);
+    }
+
+    disconnectedCallback() {
+      this.stop();
+    }
+  }
+
+  if (!customElements.get('announcement-bar')) {
+    customElements.define('announcement-bar', AnnouncementBar);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:general.announcement_bar",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:labels.background"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:labels.text_color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "t:general.announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:labels.text",
+          "default": "Free shipping on orders over Rp500.000"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:labels.link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.announcement_bar",
+      "blocks": [{ "type": "announcement" }]
+    }
+  ]
+}
+{% endschema %}

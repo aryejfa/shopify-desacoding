@@ -1,0 +1,81 @@
+{% doc %}
+  Renders accessible pagination from Liquid's native `paginate` object.
+
+  @param {paginate} paginate - The current `paginate` object
+
+  @example
+  {% paginate collection.products by 24 %}
+    ...
+    {% render 'pagination', paginate: paginate %}
+  {% endpaginate %}
+{% enddoc %}
+
+{% if paginate.pages > 1 %}
+  <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+    {% if paginate.previous %}
+      <a href="{{ paginate.previous.url }}" class="pagination__link pagination__link--prev">
+        {% render 'icon', name: 'chevron-left' %}
+        <span class="visually-hidden">{{ 'general.pagination.previous' | t }}</span>
+      </a>
+    {% endif %}
+
+    <ul class="pagination__list">
+      {% for part in paginate.parts %}
+        <li>
+          {% if part.is_link %}
+            <a href="{{ part.url }}" class="pagination__link">{{ part.title }}</a>
+          {% elsif part.title == paginate.current_page %}
+            <span class="pagination__link is-current" aria-current="page">{{ part.title }}</span>
+          {% else %}
+            <span class="pagination__ellipsis">{{ part.title }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if paginate.next %}
+      <a href="{{ paginate.next.url }}" class="pagination__link pagination__link--next">
+        <span class="visually-hidden">{{ 'general.pagination.next' | t }}</span>
+        {% render 'icon', name: 'chevron-right' %}
+      </a>
+    {% endif %}
+  </nav>
+{% endif %}
+
+{% stylesheet %}
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-block-start: 2.5rem;
+  }
+
+  .pagination__list {
+    display: flex;
+    list-style: none;
+    gap: 0.25rem;
+  }
+
+  .pagination__link,
+  .pagination__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--style-border-radius-sm);
+    text-decoration: none;
+    color: var(--color-foreground);
+    font-size: 0.875rem;
+  }
+
+  .pagination__link:hover {
+    background: var(--color-background);
+  }
+
+  .pagination__link.is-current {
+    background: var(--color-accent);
+    color: #fff;
+  }
+{% endstylesheet %}

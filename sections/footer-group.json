@@ -11,15 +11,23 @@
   "type": "footer",
   "name": "t:general.footer",
   "sections": {
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Dapatkan tips & penawaran terbaru",
+        "description": "Berlangganan untuk mendapat info kelas, produk, dan promo dari Desa Coding."
+      }
+    },
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
+        "description": "<p>Desa Coding membantu Anda belajar, berkarya, dan tumbuh bersama teknologi.</p>",
         "show_payment_icons": true
       }
     }
   },
   "order": [
+    "newsletter",
     "footer"
   ]
 }

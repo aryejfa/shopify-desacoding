@@ -1,37 +1,101 @@
 {% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
+  Cart page: line items (image, variant, price, quantity, subtotal, remove),
+  an optional cart note, an order summary and native Shopify checkout.
+  Quantity/remove are progressively enhanced by the cart controller in
+  sections/cart-drawer.liquid; the plain form still works without JS.
 {% endcomment %}
 
-<h1>{{ 'cart.title' | t }}</h1>
+<div class="cart-page section-padding full-width" data-cart-page data-section-id="{{ section.id }}">
+  <div class="cart-page__inner">
+    <h1 class="h2">{{ 'cart.title' | t }}</h1>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+    {% form 'cart', cart, class: 'cart-page__layout' %}
+      <div class="cart-page__items">
+        {% render 'cart-items' %}
+      </div>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+      {% if cart.item_count > 0 %}
+        <aside class="cart-page__summary card card--padded">
+          {% if section.settings.show_cart_note %}
+            <div class="field">
+              <label for="cart-note" class="field__label">{{ 'cart.note' | t }}</label>
+              <textarea name="note" id="cart-note" class="field__input" rows="3" placeholder="{{ 'cart.note_placeholder' | t }}">{{ cart.note }}</textarea>
+            </div>
+          {% endif %}
+
+          <div class="cart-page__subtotal">
+            <span>{{ 'cart.subtotal' | t }}</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+          <p class="text-secondary text-sm">{{ 'cart.taxes_and_shipping_at_checkout' | t }}</p>
+
+          <div class="cart-page__actions">
+            <button type="submit" name="update" class="btn btn--secondary btn--block">{{ 'cart.update' | t }}</button>
+            <button type="submit" name="checkout" class="btn btn--block">{{ 'cart.checkout' | t }}</button>
+          </div>
+        </aside>
+      {% endif %}
+    {% endform %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .cart-page__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .cart-page__layout {
+    display: grid;
+    grid-template-columns: 1fr 20rem;
+    gap: 2.5rem;
+    align-items: start;
+    margin-block-start: 1.5rem;
+  }
+
+  .cart-page__summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .cart-page__subtotal {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  .cart-page__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  @media screen and (max-width: 899px) {
+    .cart-page__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .cart-page__summary {
+      position: static;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": []
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "t:labels.enable",
+      "default": true
+    }
+  ]
 }
 {% endschema %}
