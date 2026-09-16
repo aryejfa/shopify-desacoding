@@ -1,34 +1,33 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "footer",
   "name": "t:general.footer",
   "sections": {
     "newsletter": {
       "type": "newsletter",
-      "settings": {}
+      "settings": {
+        "heading": "Dapatkan tips & penawaran terbaru",
+        "description": "Berlangganan untuk mendapat info kelas, produk, dan promo dari Desa Coding."
+      }
     },
     "footer": {
       "type": "footer",
-      "blocks": {
-        "menu-1": {
-          "type": "menu",
-          "settings": {
-            "title": "Belanja",
-            "menu": "footer"
-          }
-        },
-        "menu-2": {
-          "type": "menu",
-          "settings": {
-            "title": "Bantuan",
-            "menu": "footer"
-          }
-        }
-      },
-      "block_order": ["menu-1", "menu-2"],
       "settings": {
+        "description": "<p>Desa Coding membantu Anda belajar, berkarya, dan tumbuh bersama teknologi.</p>",
         "show_payment_icons": true
       }
     }
   },
-  "order": ["newsletter", "footer"]
+  "order": [
+    "newsletter",
+    "footer"
+  ]
 }
