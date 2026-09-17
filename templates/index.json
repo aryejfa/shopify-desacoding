@@ -16,9 +16,9 @@
         "heading": "Belajar, Berkarya, dan Tumbuh Bersama Teknologi",
         "description": "Temukan produk, kelas, dan solusi digital yang membantu meningkatkan kemampuan serta produktivitas Anda.",
         "cta_label": "Lihat Produk",
-        "cta_link": "",
+        "cta_link": "/collections/all",
         "secondary_cta_label": "Pelajari Lebih Lanjut",
-        "secondary_cta_link": "",
+        "secondary_cta_link": "/collections/all",
         "image": "shopify://shop_images/Go-Lang.jpg",
         "overlay_opacity": 35,
         "content_position": "hero--content-left"
@@ -95,7 +95,7 @@
         "heading": "Tingkatkan kemampuan coding Anda",
         "description": "Ikuti kelas dan produk digital terbaru dari Desa Coding, dirancang untuk pemula hingga tingkat lanjut.",
         "cta_label": "Jelajahi sekarang",
-        "cta_link": ""
+        "cta_link": "/collections/all"
       }
     },
     "featured-products": {
